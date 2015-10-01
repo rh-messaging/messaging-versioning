@@ -1,0 +1,156 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- This test folder contains tests that are not part of the regular testsuite
+     because they use optional libraries such as LGPL or private ones.
+     They are optional and will validate extra functionality available through Service Integration
+     Example: Transaction Manager -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>org.redhat.messaging</groupId>
+      <artifactId>message-versioning</artifactId>
+      <version>1-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>artemis_server-hornetq_client</artifactId>
+   <packaging>jar</packaging>
+   <name>Artemis Server / HornetQ Client</name>
+
+   <properties>
+      <artemis-version>1.1.1-SNAPSHOT</artemis-version>
+   </properties>
+
+   <profiles>
+      <profile>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <id>HQ_2_4_7</id>
+         <properties>
+            <hornetq-version>2.4.7.Final</hornetq-version>
+         </properties>
+      </profile>
+      <profile>
+         <id>HQ_2_3_25</id>
+         <properties>
+            <hornetq-version>2.3.25.Final</hornetq-version>
+         </properties>
+      </profile>
+      <profile>
+         <id>HQ_2_2_30</id>
+         <properties>
+            <hornetq-version>2.2.30.Final</hornetq-version>
+         </properties>
+         <dependencies>
+            <dependency>
+               <groupId>org.hornetq</groupId>
+               <artifactId>hornetq-jms-client</artifactId>
+               <version>${hornetq-version}</version>
+            </dependency>
+            <dependency>
+               <groupId>org.hornetq</groupId>
+               <artifactId>hornetq-core</artifactId>
+               <version>${hornetq-version}</version>
+            </dependency>
+            <dependency>
+               <groupId>org.hornetq</groupId>
+               <artifactId>hornetq-core-client</artifactId>
+               <version>${hornetq-version}</version>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.netty</groupId>
+               <artifactId>netty</artifactId>
+               <version>3.2.10.Final</version>
+            </dependency>
+         </dependencies>
+      </profile>
+   </profiles>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.apache.geronimo.specs</groupId>
+         <artifactId>geronimo-jms_2.0_spec</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.redhat.messaging</groupId>
+         <artifactId>base-versioning</artifactId>
+         <version>${project.version}</version>
+         <scope>test</scope>
+         <type>test-jar</type>
+      </dependency>
+
+
+
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-jms-server</artifactId>
+         <version>${artemis-version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-amqp-protocol</artifactId>
+         <version>${artemis-version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-stomp-protocol</artifactId>
+         <version>${artemis-version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-openwire-protocol</artifactId>
+         <version>${artemis-version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.apache.activemq</groupId>
+         <artifactId>artemis-hornetq-protocol</artifactId>
+         <version>${artemis-version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.hornetq</groupId>
+         <artifactId>hornetq-jms-client</artifactId>
+         <version>${hornetq-version}</version>
+      </dependency>
+
+
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>test-jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>

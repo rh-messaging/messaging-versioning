@@ -31,7 +31,8 @@ under the License.
    <modules>
       <module>base-versioning</module>
 
-      <module>artemis_1_1_x_server-hornetq-client</module>
+      <module>artemis_server-hornetq_client</module>
+      <module>hornetq_server-artemis_client</module>
    </modules>
    <dependencyManagement>
       <dependencies>

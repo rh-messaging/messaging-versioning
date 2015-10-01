@@ -28,9 +28,9 @@
       <version>1-SNAPSHOT</version>
    </parent>
 
-   <artifactId>artemis_1_1_x_server-hornetq-client</artifactId>
+   <artifactId>hornetq_server-artemis_client</artifactId>
    <packaging>jar</packaging>
-   <name>Client HornetQ 2.4 / Server Artemis 1.1.0</name>
+   <name>HornetQ Server / Artemis Client</name>
 
    <properties>
       <artemis-version>1.1.1-SNAPSHOT</artemis-version>
