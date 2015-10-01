@@ -93,6 +93,7 @@ public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
          TextMessage message = (TextMessage)consumer.receive(5000);
          Assert.assertNotNull(message);
          Assert.assertEquals("message " + i, message.getStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID()));
+         System.out.println("Received " + message);
       }
 
       connection.close();
