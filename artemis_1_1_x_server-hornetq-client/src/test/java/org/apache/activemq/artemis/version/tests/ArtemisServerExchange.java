@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
-import org.apache.activemq.artemis.core.message.impl.MessageImpl;
 import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
@@ -32,6 +31,7 @@ import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ClientServerExchange;
 import org.apache.activemq.artemis.version.base.ServerContainer;
 import org.hornetq.api.core.TransportConfiguration;
+import org.hornetq.core.message.impl.MessageImpl;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.remoting.impl.netty.TransportConstants;
 import org.hornetq.jms.client.HornetQJMSConnectionFactory;
