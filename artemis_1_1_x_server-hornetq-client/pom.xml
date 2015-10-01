@@ -34,8 +34,25 @@
 
    <properties>
       <artemis-version>1.1.1-SNAPSHOT</artemis-version>
-      <hornetq-version>2.3.25.SP3.Final</hornetq-version>
    </properties>
+
+   <profiles>
+      <profile>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <id>HQ_2_4_7</id>
+         <properties>
+            <hornetq-version>2.4.7.Final</hornetq-version>
+         </properties>
+      </profile>
+      <profile>
+         <id>HQ_2_3_25</id>
+         <properties>
+            <hornetq-version>2.3.25.Final</hornetq-version>
+         </properties>
+      </profile>
+   </profiles>
 
    <dependencies>
       <dependency>

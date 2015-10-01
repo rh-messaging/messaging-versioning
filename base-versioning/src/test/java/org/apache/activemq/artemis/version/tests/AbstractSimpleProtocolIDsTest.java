@@ -83,18 +83,11 @@ public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
       connection.start();
 
       // Check that HornetQ Properties are correctly converted to core properties.
-      for (int i = 0; i < 50; i++) {
+      for (int i = 0; i < 100; i++) {
          TextMessage message = session.createTextMessage("message " + i);
          message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
          producer.send(message);
       }
-
-      for (int i = 50; i < 100; i++) {
-         TextMessage message = session.createTextMessage("message " + i);
-         message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
-         producer.send(queue, message);
-      }
-
 
       for (int i = 0; i < 100; i++) {
          TextMessage message = (TextMessage)consumer.receive(5000);
