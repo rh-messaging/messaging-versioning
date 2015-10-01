@@ -28,14 +28,15 @@ import javax.jms.TextMessage;
 import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ClientServerExchange;
 import org.apache.activemq.artemis.version.base.ServerContainer;
+import org.apache.activemq.artemis.version.base.VersionBaseTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractSimpleProtocolIDsTest {
+public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
 
-   protected abstract ClientServerExchange newExchange();
+   protected abstract ClientServerExchange newExchange() throws Exception;
 
    ClientServerExchange exchange;
    ServerContainer serverContainer;
