@@ -64,9 +64,7 @@ public class HornetQServerContainer implements ServerContainer {
          parameters.add(t);
       }
 
-      process = SpawnVMSupport.spawnVM(classPath, HornetQServerProcess.class.getName(), "-Xms512m", "-Xmx512m", new String[0], true, true, parameters.toArray(new String[parameters.size()]));
-
-      Thread.sleep(5000);
+      process = SpawnVMSupport.spawnVM(HornetQServerProcess.wordStart, classPath, HornetQServerProcess.class.getName(), new String[]{}, true, true, "srv:" + id, parameters.toArray(new String[parameters.size()]));
    }
 
    @Override

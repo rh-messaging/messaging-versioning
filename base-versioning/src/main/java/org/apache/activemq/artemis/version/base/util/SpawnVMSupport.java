@@ -23,21 +23,33 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public final class SpawnVMSupport {
 
-
-   public static Process spawnVM(final String classpath,
+   /**
+    * @param lookupWord The word the process will print when it's ready
+    * @param classpath The class path to start the VM
+    * @param className The className
+    * @param vmargs
+    * @param logOutput
+    * @param logErrorOutput
+    * @param args
+    * @return
+    * @throws Exception
+    */
+   public static Process spawnVM(final String lookupWord,
+                                 final String classpath,
                                  final String className,
-                                 final String memoryArg1,
-                                 final String memoryArg2,
                                  final String[] vmargs,
                                  final boolean logOutput,
                                  final boolean logErrorOutput,
+                                 final String logName,
                                  final String... args) throws Exception {
       ProcessBuilder builder = new ProcessBuilder();
       final String javaPath = Paths.get(System.getProperty("java.home"), "bin", "java").toAbsolutePath().toString();
-      builder.command(javaPath, memoryArg1, memoryArg2, "-cp", classpath);
+      builder.command(javaPath);
 
       List<String> commandList = builder.command();
 
@@ -46,12 +58,16 @@ public final class SpawnVMSupport {
             commandList.add(arg);
          }
       }
+
+      commandList.add("-cp");
+      commandList.add(classpath);
+
       commandList.add(className);
       for (String arg : args) {
          commandList.add(arg);
       }
 
-      System.out.println("####");
+      System.out.println("#### command:");
       for (String string : builder.command()) {
          System.out.print(string + " ");
       }
@@ -59,27 +75,19 @@ public final class SpawnVMSupport {
 
       Process process = builder.start();
 
-      if (logOutput) {
-         SpawnVMSupport.startLogger(className, process);
-
-      }
+      ProcessLogger outputLogger = new ProcessLogger(logOutput, process.getInputStream(), logName);
+      CountDownLatch latch = new CountDownLatch(1);
+      outputLogger.setLookupWord(lookupWord, latch);
+      outputLogger.start();
 
       // Adding a reader to System.err, so the VM won't hang on a System.err.println as identified on this forum thread:
       // http://www.jboss.org/index.html?module=bb&op=viewtopic&t=151815
-      ProcessLogger errorLogger = new ProcessLogger(logErrorOutput, process.getErrorStream(), className);
+      ProcessLogger errorLogger = new ProcessLogger(logErrorOutput, process.getErrorStream(), logName + "_err");
       errorLogger.start();
 
-      return process;
-   }
+      latch.await(60, TimeUnit.SECONDS);
 
-   /**
-    * @param className
-    * @param process
-    * @throws ClassNotFoundException
-    */
-   public static void startLogger(final String className, final Process process) throws ClassNotFoundException {
-      ProcessLogger outputLogger = new ProcessLogger(true, process.getInputStream(), className);
-      outputLogger.start();
+      return process;
    }
 
    /**
@@ -92,6 +100,15 @@ public final class SpawnVMSupport {
       private final String className;
 
       private final boolean print;
+
+      private String lookup;
+      private CountDownLatch latch;
+
+      public void setLookupWord(String lookupWord, CountDownLatch latch) {
+         this.lookup = lookupWord;
+         this.latch = latch;
+
+      }
 
       ProcessLogger(final boolean print, final InputStream is, final String className) throws ClassNotFoundException {
          this.is = is;
@@ -109,6 +126,9 @@ public final class SpawnVMSupport {
             while ((line = br.readLine()) != null) {
                if (print) {
                   System.out.println(className + ":" + line);
+               }
+               if (lookup != null && lookup.equals(line)) {
+                  latch.countDown();
                }
             }
          }

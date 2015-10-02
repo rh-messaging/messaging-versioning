@@ -20,6 +20,7 @@ package org.apache.activemq.artemis.version.tests.serverContainer;
 import java.io.File;
 import java.util.HashMap;
 
+import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.core.config.Configuration;
 import org.hornetq.core.config.impl.ConfigurationImpl;
@@ -30,6 +31,8 @@ import org.hornetq.jms.server.embedded.EmbeddedJMS;
 
 public class HornetQServerProcess {
 
+
+   public static final String wordStart = "**SERVER STARTED**";
 
    static Configuration configuration;
    static JMSConfiguration jmsConfiguration;
@@ -80,12 +83,17 @@ public class HornetQServerProcess {
          embeddedJMS.setConfiguration(configuration);
          embeddedJMS.setJmsConfiguration(jmsConfiguration);
          embeddedJMS.start();
+
+         for (String q: queues) {
+            SimpleString strQueue = SimpleString.toSimpleString("jms.queue." + q);
+            embeddedJMS.getHornetQServer().createQueue(strQueue, strQueue, null, true, false);
+         }
       }
       catch (Exception e) {
          e.printStackTrace();
       }
 
-      System.out.println("SERVER STARTED");
+      System.out.println(wordStart);
 
    }
 

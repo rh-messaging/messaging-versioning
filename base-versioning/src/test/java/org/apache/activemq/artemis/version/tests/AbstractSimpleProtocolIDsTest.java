@@ -24,7 +24,6 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import java.lang.reflect.Method;
 
 import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ServerContainer;
@@ -40,18 +39,13 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
 
    ClientContainer clientContainer;
 
-
-   protected void createQueue(Object serverContainer, String queueName) throws Exception {
-      Method method = serverClass.getMethod("createQueue", String.class);
-      method.invoke(serverContainer, queueName);
-
-   }
+   String queueName = "test.hq.queue";
 
    @Before
    public void setUp() throws Exception {
       super.setUp();
 
-      this.serverContainer = startServer(0, new String[]{"test.hq.queue"}, new String[0]);
+      this.serverContainer = startServer(0, new String[]{queueName}, new String[0]);
 
       clientContainer = exchange.newClient();
    }
@@ -71,12 +65,6 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       Connection connection = connectionFactory.createConnection();
 
       Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-
-      // Create Queue
-      String queueName = "test.hq.queue";
-
-      createQueue(serverContainer, queueName);
-
       Queue queue =  session.createQueue(queueName);
 
       MessageProducer producer = session.createProducer(queue);
