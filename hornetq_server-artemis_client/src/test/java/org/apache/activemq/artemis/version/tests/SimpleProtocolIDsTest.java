@@ -23,6 +23,6 @@ public class SimpleProtocolIDsTest extends AbstractSimpleProtocolIDsTest {
 
    @Override
    protected ClientServerExchange newExchange() throws Exception {
-      return new ArtemisServerExchange(this.temporaryFolder.newFolder().toString());
+      return new HornetQServerExchange(this.temporaryFolder.newFolder().toString());
    }
 }

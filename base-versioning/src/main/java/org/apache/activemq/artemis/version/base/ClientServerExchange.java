@@ -19,5 +19,6 @@ package org.apache.activemq.artemis.version.base;
 
 public interface ClientServerExchange {
    ClientContainer newClient() throws Exception;
-   ServerContainer newServer(int id) throws Exception;
+
+   ServerContainer newServerContainer() throws Exception;
 }

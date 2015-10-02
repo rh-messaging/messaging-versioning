@@ -37,56 +37,39 @@
    </properties>
 
    <profiles>
+      <!-- HornetQ Profiles -->
       <profile>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
-         <id>HQ_2_4_7</id>
+         <id>HQ_2_4_6</id>
          <properties>
-            <hornetq-version>2.4.7.Final</hornetq-version>
-         </properties>
-      </profile>
-      <profile>
-         <id>HQ_2_3_25</id>
-         <properties>
-            <hornetq-version>2.3.25.Final</hornetq-version>
-         </properties>
-      </profile>
-      <profile>
-         <id>HQ_2_2_30</id>
-         <properties>
-            <hornetq-version>2.2.30.Final</hornetq-version>
+            <hornetq-version>2.4.6.Final</hornetq-version>
          </properties>
          <dependencies>
             <dependency>
                <groupId>org.hornetq</groupId>
-               <artifactId>hornetq-jms-client</artifactId>
+               <artifactId>hornetq-jms-server</artifactId>
                <version>${hornetq-version}</version>
             </dependency>
+         </dependencies>
+      </profile>
+      <profile>
+         <id>HQ_2_3_25</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <properties>
+            <hornetq-version>2.3.25.Final</hornetq-version>
+         </properties>
+         <dependencies>
             <dependency>
                <groupId>org.hornetq</groupId>
-               <artifactId>hornetq-core</artifactId>
+               <artifactId>hornetq-jms-server</artifactId>
                <version>${hornetq-version}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.hornetq</groupId>
-               <artifactId>hornetq-core-client</artifactId>
-               <version>${hornetq-version}</version>
-            </dependency>
-            <dependency>
-               <groupId>org.jboss.netty</groupId>
-               <artifactId>netty</artifactId>
-               <version>3.2.10.Final</version>
             </dependency>
          </dependencies>
       </profile>
    </profiles>
 
    <dependencies>
-      <dependency>
-         <groupId>org.apache.geronimo.specs</groupId>
-         <artifactId>geronimo-jms_2.0_spec</artifactId>
-      </dependency>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
@@ -95,49 +78,53 @@
          <groupId>org.redhat.messaging</groupId>
          <artifactId>base-versioning</artifactId>
          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.redhat.messaging</groupId>
+         <artifactId>base-versioning</artifactId>
+         <version>${project.version}</version>
          <scope>test</scope>
          <type>test-jar</type>
       </dependency>
-
-
-
       <dependency>
          <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-jms-server</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-amqp-protocol</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-stomp-protocol</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-openwire-protocol</artifactId>
-         <version>${artemis-version}</version>
+         <artifactId>artemis-jms-client</artifactId>
+         <version>1.1.1-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-hornetq-protocol</artifactId>
-         <version>${artemis-version}</version>
+         <version>1.1.1-SNAPSHOT</version>
       </dependency>
-
-      <dependency>
-         <groupId>org.hornetq</groupId>
-         <artifactId>hornetq-jms-client</artifactId>
-         <version>${hornetq-version}</version>
-      </dependency>
-
 
    </dependencies>
 
    <build>
       <plugins>
+         <plugin>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-maven-plugin</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+            <executions>
+               <execution>
+                  <phase>compile</phase>
+                  <goals>
+                     <goal>dependency-scan</goal>
+                  </goals>
+                  <configuration>
+                     <dependencyList>
+                        <arg>org.hornetq:hornetq-jms-server:${hornetq-version}</arg>
+                     </dependencyList>
+                     <individualList>
+                        <arg>org.redhat.messaging:hornetq_server-artemis_client:${project.version}</arg>
+                        <arg>org.redhat.messaging:base-versioning:${project.version}</arg>
+                        <arg>org.redhat.messaging:hornetq_server-artemis_client:${project.version}</arg>
+                     </individualList>
+                     <variableName>serverClassPath</variableName>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
@@ -149,6 +136,18 @@
                   </goals>
                </execution>
             </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <systemProperties>
+                  <property>
+                     <name>serverClassPath</name>
+                     <value>${serverClassPath}</value>
+                  </property>
+               </systemProperties>
+            </configuration>
          </plugin>
       </plugins>
    </build>

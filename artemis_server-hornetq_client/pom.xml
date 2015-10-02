@@ -84,10 +84,6 @@
 
    <dependencies>
       <dependency>
-         <groupId>org.apache.geronimo.specs</groupId>
-         <artifactId>geronimo-jms_2.0_spec</artifactId>
-      </dependency>
-      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
       </dependency>
@@ -99,26 +95,17 @@
          <type>test-jar</type>
       </dependency>
 
+      <dependency>
+         <groupId>org.redhat.messaging</groupId>
+         <artifactId>base-versioning</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
 
 
       <dependency>
          <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-jms-server</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-amqp-protocol</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-stomp-protocol</artifactId>
-         <version>${artemis-version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.activemq</groupId>
-         <artifactId>artemis-openwire-protocol</artifactId>
          <version>${artemis-version}</version>
       </dependency>
       <dependency>

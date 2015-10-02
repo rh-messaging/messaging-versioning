@@ -18,37 +18,32 @@
 package org.apache.activemq.artemis.version.tests;
 
 import javax.jms.ConnectionFactory;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.activemq.artemis.core.message.impl.MessageImpl;
+import org.apache.activemq.artemis.core.protocol.hornetq.client.HornetQClientProtocolManagerFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ClientServerExchange;
-import org.apache.activemq.artemis.version.base.ServerContainer;
-import org.hornetq.api.core.TransportConfiguration;
-import org.hornetq.core.message.impl.MessageImpl;
-import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
-import org.hornetq.core.remoting.impl.netty.TransportConstants;
-import org.hornetq.jms.client.HornetQJMSConnectionFactory;
 
-public class ArtemisServerExchange implements ClientServerExchange {
+public class HornetQServerExchange implements ClientServerExchange {
 
    private String folder;
 
-   public ArtemisServerExchange(String folder) {
+   public HornetQServerExchange(String folder) {
       this.folder = folder;
    }
 
    @Override
    public ClientContainer newClient() {
-      return new HornetQClientConnector();
+      return new ArtemisClientContainer();
    }
 
-   public ServerContainer newServerContainer() throws Exception {
-      return new ArtemisServerContainer();
-
+   @Override
+   public HornetQServerContainer newServerContainer() {
+      return new HornetQServerContainer();
    }
 
-   class HornetQClientConnector implements ClientContainer {
+   class ArtemisClientContainer implements ClientContainer {
 
       @Override
       public void close() {
@@ -57,11 +52,7 @@ public class ArtemisServerExchange implements ClientServerExchange {
 
       @Override
       public ConnectionFactory getFactory() {
-         Map properties = new HashMap();
-         properties.put(TransportConstants.HOST_PROP_NAME, "localhost");
-         properties.put(TransportConstants.PORT_PROP_NAME, "61616");
-         TransportConfiguration configuration = new TransportConfiguration(NettyConnectorFactory.class.getName(), properties);
-         HornetQJMSConnectionFactory factory = new HornetQJMSConnectionFactory(false, configuration);
+         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("tcp://localhost:5445?protocolManagerFactoryStr=" + HornetQClientProtocolManagerFactory.class.getName());
          return factory;
       }
 

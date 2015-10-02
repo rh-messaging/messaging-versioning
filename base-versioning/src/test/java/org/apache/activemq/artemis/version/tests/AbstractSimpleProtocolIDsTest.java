@@ -24,40 +24,44 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import java.lang.reflect.Method;
 
 import org.apache.activemq.artemis.version.base.ClientContainer;
-import org.apache.activemq.artemis.version.base.ClientServerExchange;
 import org.apache.activemq.artemis.version.base.ServerContainer;
-import org.apache.activemq.artemis.version.base.VersionBaseTest;
+import org.apache.activemq.artemis.version.tests.base.IsolatedServerVersionBaseTest;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
+public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersionBaseTest {
 
-   protected abstract ClientServerExchange newExchange() throws Exception;
-
-   ClientServerExchange exchange;
    ServerContainer serverContainer;
 
    ClientContainer clientContainer;
 
+
+   protected void createQueue(Object serverContainer, String queueName) throws Exception {
+      Method method = serverClass.getMethod("createQueue", String.class);
+      method.invoke(serverContainer, queueName);
+
+   }
+
    @Before
    public void setUp() throws Exception {
+      super.setUp();
 
-      exchange = newExchange();
-
-      serverContainer = exchange.newServer(0);
-      serverContainer.start();
+      this.serverContainer = startServer(0, new String[]{"test.hq.queue"}, new String[0]);
 
       clientContainer = exchange.newClient();
    }
 
+
    @After
    public void tearDown() throws Exception {
-      serverContainer.stop();
       clientContainer.close();
+
+      serverContainer.stop();
    }
 
    @Test
@@ -71,7 +75,7 @@ public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
       // Create Queue
       String queueName = "test.hq.queue";
 
-      serverContainer.createQueue(queueName);
+      createQueue(serverContainer, queueName);
 
       Queue queue =  session.createQueue(queueName);
 
@@ -83,18 +87,27 @@ public abstract class AbstractSimpleProtocolIDsTest extends VersionBaseTest {
       connection.start();
 
       // Check that HornetQ Properties are correctly converted to core properties.
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 50; i++) {
          TextMessage message = session.createTextMessage("message " + i);
          message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
          producer.send(message);
       }
 
-      for (int i = 0; i < 100; i++) {
+      // Repeat send, hoping messages will get ignored
+      for (int i = 0; i < 50; i++) {
+         TextMessage message = session.createTextMessage("message " + i);
+         message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
+         producer.send(message);
+      }
+
+      for (int i = 0; i < 50; i++) {
          TextMessage message = (TextMessage)consumer.receive(5000);
          Assert.assertNotNull(message);
          Assert.assertEquals("message " + i, message.getStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID()));
          System.out.println("Received " + message);
       }
+
+      Assert.assertNull(consumer.receiveNoWait());
 
       connection.close();
    }

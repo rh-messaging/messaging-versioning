@@ -34,6 +34,16 @@ under the License.
       <module>artemis_server-hornetq_client</module>
       <module>hornetq_server-artemis_client</module>
    </modules>
+
+
+   <distributionManagement>
+      <repository>
+         <id>jboss-releases-repository</id>
+         <name>JBoss Releases Repository</name>
+         <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+      </repository>
+   </distributionManagement>
+
    <dependencyManagement>
       <dependencies>
          <dependency>
