@@ -32,19 +32,28 @@
    <packaging>jar</packaging>
    <name>Artemis Server / HornetQ Client</name>
 
-   <properties>
-      <artemis-version>1.1.1-SNAPSHOT</artemis-version>
-   </properties>
-
    <profiles>
       <profile>
+         <id>HQ_2_4_7</id>
          <activation>
             <activeByDefault>true</activeByDefault>
          </activation>
-         <id>HQ_2_4_7</id>
          <properties>
             <hornetq-version>2.4.7.Final</hornetq-version>
          </properties>
+      </profile>
+      <profile>
+         <id>HQ_2_4_6</id>
+         <properties>
+            <hornetq-version>2.4.7.Final</hornetq-version>
+         </properties>
+         <dependencies>
+            <dependency>
+               <groupId>org.hornetq</groupId>
+               <artifactId>hornetq-jms-server</artifactId>
+               <version>${hornetq-version}</version>
+            </dependency>
+         </dependencies>
       </profile>
       <profile>
          <id>HQ_2_3_25</id>
@@ -126,6 +135,30 @@
    <build>
       <plugins>
          <plugin>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-maven-plugin</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+            <executions>
+               <execution>
+                  <phase>compile</phase>
+                  <goals>
+                     <goal>dependency-scan</goal>
+                  </goals>
+                  <configuration>
+                     <dependencyList>
+                        <arg>org.apache.activemq:artemis-jms-server:${artemis-version}</arg>
+                        <arg>org.apache.activemq:artemis-hornetq-protocol:${artemis-version}</arg>
+                     </dependencyList>
+                     <individualList>
+                        <arg>org.redhat.messaging:artemis_server-hornetq_client:${project.version}</arg>
+                        <arg>org.redhat.messaging:base-versioning:${project.version}</arg>
+                     </individualList>
+                     <variableName>serverClassPath</variableName>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <executions>
@@ -136,6 +169,18 @@
                   </goals>
                </execution>
             </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+               <systemProperties>
+                  <property>
+                     <name>serverClassPath</name>
+                     <value>${serverClassPath}</value>
+                  </property>
+               </systemProperties>
+            </configuration>
          </plugin>
       </plugins>
    </build>

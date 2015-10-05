@@ -54,7 +54,6 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
    @After
    public void tearDown() throws Exception {
       clientContainer.close();
-
       serverContainer.stop();
    }
 
@@ -85,6 +84,7 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       for (int i = 0; i < 50; i++) {
          TextMessage message = session.createTextMessage("message " + i);
          message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
+         System.out.println("duplicate " + clientContainer.get_HDR_DUPLICATE_DETECTION_ID());
          producer.send(message);
       }
 

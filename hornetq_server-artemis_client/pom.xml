@@ -39,9 +39,25 @@
    <profiles>
       <!-- HornetQ Profiles -->
       <profile>
+         <id>HQ_2_4_7</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <properties>
+            <hornetq-version>2.4.7.Final</hornetq-version>
+         </properties>
+         <dependencies>
+            <dependency>
+               <groupId>org.hornetq</groupId>
+               <artifactId>hornetq-jms-server</artifactId>
+               <version>${hornetq-version}</version>
+            </dependency>
+         </dependencies>
+      </profile>
+      <profile>
          <id>HQ_2_4_6</id>
          <properties>
-            <hornetq-version>2.4.6.Final</hornetq-version>
+            <hornetq-version>2.4.7.Final</hornetq-version>
          </properties>
          <dependencies>
             <dependency>
@@ -53,9 +69,6 @@
       </profile>
       <profile>
          <id>HQ_2_3_25</id>
-         <activation>
-            <activeByDefault>true</activeByDefault>
-         </activation>
          <properties>
             <hornetq-version>2.3.25.Final</hornetq-version>
          </properties>
@@ -67,6 +80,13 @@
             </dependency>
          </dependencies>
       </profile>
+      <profile>
+         <id>HQ_2_2_30</id>
+         <properties>
+            <skipTests>true</skipTests>
+         </properties>
+      </profile>
+
    </profiles>
 
    <dependencies>
@@ -89,12 +109,12 @@
       <dependency>
          <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-jms-client</artifactId>
-         <version>1.1.1-SNAPSHOT</version>
+         <version>${artemis-version}</version>
       </dependency>
       <dependency>
          <groupId>org.apache.activemq</groupId>
          <artifactId>artemis-hornetq-protocol</artifactId>
-         <version>1.1.1-SNAPSHOT</version>
+         <version>${artemis-version}</version>
       </dependency>
 
    </dependencies>

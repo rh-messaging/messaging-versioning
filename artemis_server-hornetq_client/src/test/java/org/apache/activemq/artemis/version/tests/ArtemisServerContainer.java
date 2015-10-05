@@ -17,16 +17,11 @@
 
 package org.apache.activemq.artemis.version.tests;
 
-import java.io.File;
+import java.util.LinkedList;
 
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
-import org.apache.activemq.artemis.core.server.JournalType;
-import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
-import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
-import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
 import org.apache.activemq.artemis.version.base.ServerContainer;
 import org.apache.activemq.artemis.version.base.util.SpawnVMSupport;
+import org.apache.activemq.artemis.version.tests.serverContainer.ArtemisServerProcess;
 
 public class ArtemisServerContainer implements ServerContainer {
 
@@ -44,17 +39,35 @@ public class ArtemisServerContainer implements ServerContainer {
       this.topics = topics;
    }
 
-   public ArtemisServerContainer() throws Exception {
+
+   public ArtemisServerContainer() {
    }
 
    @Override
    public void start() throws Exception {
-//      SpawnVMSupport.spawnVM()
-//      embeddedJMS.start();
+      String classPath = System.getProperty("serverClassPath");
+      if (classPath == null) {
+         classPath = System.getProperty("java.class.path");
+      }
+
+      LinkedList<String> parameters = new LinkedList<String>();
+      parameters.add(folder);
+      parameters.add(Integer.toString(id));
+      parameters.add(Integer.toString(queues.length));
+      for (String q : queues) {
+         parameters.add(q);
+      }
+
+      parameters.add(Integer.toString(topics.length));
+      for (String t: topics) {
+         parameters.add(t);
+      }
+
+      process = SpawnVMSupport.spawnVM(ArtemisServerProcess.wordStart, classPath, ArtemisServerProcess.class.getName(), new String[]{}, true, true, "srv:" + id, parameters.toArray(new String[parameters.size()]));
    }
 
    @Override
    public void stop() throws Exception {
-//      embeddedJMS.stop();
+      process.destroy();
    }
 }

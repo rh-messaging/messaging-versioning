@@ -24,10 +24,13 @@ import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.JournalType;
 import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
+import org.apache.activemq.artemis.jms.server.config.impl.JMSQueueConfigurationImpl;
+import org.apache.activemq.artemis.jms.server.config.impl.TopicConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
 
 public class ArtemisServerProcess {
 
+   public static final String wordStart = "**SERVER STARTED**";
 
    static Configuration configuration;
    static JMSConfiguration jmsConfiguration;
@@ -58,7 +61,6 @@ public class ArtemisServerProcess {
          topics[i] = arg[placeOnArg + i];
       }
 
-
       try {
          configuration = new ConfigurationImpl();
          configuration.setJournalType(JournalType.NIO);
@@ -67,12 +69,22 @@ public class ArtemisServerProcess {
          configuration.setSecurityEnabled(false);
 
          jmsConfiguration = new JMSConfigurationImpl();
+
+         for (String queue : queues) {
+            JMSQueueConfigurationImpl queueConfiguration = new JMSQueueConfigurationImpl().setName(queue);
+            jmsConfiguration.getQueueConfigurations().add(queueConfiguration);
+         }
+         for (String t : topics) {
+            TopicConfigurationImpl toicConfiguration = new TopicConfigurationImpl().setName(t);
+            jmsConfiguration.getTopicConfigurations().add(toicConfiguration);
+         }
+
          EmbeddedJMS embeddedJMS = new EmbeddedJMS();
          embeddedJMS.setConfiguration(configuration);
          embeddedJMS.setJmsConfiguration(jmsConfiguration);
          embeddedJMS.start();
 
-         System.out.println("SERVER STARTED");
+         System.out.println(wordStart);
       }
       catch (Exception e) {
          e.printStackTrace();
