@@ -22,11 +22,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public final class SpawnVMSupport {
+
+   final static List<Process> processes = Collections.synchronizedList(new LinkedList<Process>());
+
+
+   static {
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+         public void run() {
+            for (Process process : processes) {
+               process.destroy();
+            }
+         }
+      });
+
+   }
 
    /**
     * @param lookupWord The word the process will print when it's ready
@@ -74,6 +90,7 @@ public final class SpawnVMSupport {
       System.out.println();
 
       Process process = builder.start();
+      processes.add(process);
 
       ProcessLogger outputLogger = new ProcessLogger(logOutput, process.getInputStream(), logName);
       CountDownLatch latch = new CountDownLatch(1);
