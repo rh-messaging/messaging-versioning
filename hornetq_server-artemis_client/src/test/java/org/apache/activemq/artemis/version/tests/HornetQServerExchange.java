@@ -19,6 +19,7 @@ package org.apache.activemq.artemis.version.tests;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.activemq.artemis.api.jms.ActiveMQJMSConstants;
 import org.apache.activemq.artemis.core.message.impl.MessageImpl;
 import org.apache.activemq.artemis.core.protocol.hornetq.client.HornetQClientProtocolManagerFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -48,6 +49,11 @@ public class HornetQServerExchange implements ClientServerExchange {
       @Override
       public void close() {
 
+      }
+
+      @Override
+      public String get_LargeMessageInputStream() {
+         return ActiveMQJMSConstants.JMS_ACTIVEMQ_INPUT_STREAM;
       }
 
       @Override

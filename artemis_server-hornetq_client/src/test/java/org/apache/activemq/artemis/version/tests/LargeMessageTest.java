@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.activemq.artemis.version.base;
+package org.apache.activemq.artemis.version.tests;
 
-import javax.jms.ConnectionFactory;
+import org.apache.activemq.artemis.version.base.ClientServerExchange;
 
-public interface ClientContainer {
-   public void close();
+public class LargeMessageTest extends AbstractLargeMessageTest {
 
-   ConnectionFactory getFactory();
-
-   String get_HDR_DUPLICATE_DETECTION_ID();
-   String get_LargeMessageInputStream();
+   @Override
+   protected ClientServerExchange newExchange() throws Exception {
+      return new ArtemisServerExchange(this.temporaryFolder.newFolder().toString());
+   }
 }

@@ -1,3 +1,4 @@
+#!/bin/sh -e -v
 mvn clean
 mvn -PHQ_2_4_6 install
 mvn -PHQ_2_4_7 install

@@ -25,6 +25,7 @@ import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ClientServerExchange;
 import org.apache.activemq.artemis.version.base.ServerContainer;
 import org.hornetq.api.core.TransportConfiguration;
+import org.hornetq.api.jms.HornetQJMSConstants;
 import org.hornetq.core.message.impl.MessageImpl;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.remoting.impl.netty.TransportConstants;
@@ -53,6 +54,11 @@ public class ArtemisServerExchange implements ClientServerExchange {
       @Override
       public void close() {
 
+      }
+
+      @Override
+      public String get_LargeMessageInputStream() {
+         return HornetQJMSConstants.JMS_HORNETQ_INPUT_STREAM;
       }
 
       @Override

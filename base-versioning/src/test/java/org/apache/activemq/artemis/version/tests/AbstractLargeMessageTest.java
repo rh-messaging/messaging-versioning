@@ -17,13 +17,15 @@
 
 package org.apache.activemq.artemis.version.tests;
 
+import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.activemq.artemis.version.base.ClientContainer;
 import org.apache.activemq.artemis.version.base.ServerContainer;
@@ -33,8 +35,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersionBaseTest {
+public abstract class AbstractLargeMessageTest extends IsolatedServerVersionBaseTest {
 
+   public static final int LARGE_MESSAGE_SIZE = 10 * 1024;
    ServerContainer serverContainer;
 
    ClientContainer clientContainer;
@@ -56,6 +59,40 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       serverContainer.stop();
    }
 
+   // Creates a Fake LargeStream without using a real file
+   public static InputStream createFakeLargeStream(final long size) throws Exception {
+      return new InputStream() {
+         private long count;
+
+         private boolean closed = false;
+
+         @Override
+         public void close() throws IOException {
+            super.close();
+            closed = true;
+         }
+
+         @Override
+         public int read() throws IOException {
+            if (closed) {
+               throw new IOException("Stream was closed");
+            }
+            if (count++ < size) {
+               return getSamplebyte(count - 1);
+            }
+            else {
+               return -1;
+            }
+         }
+
+      };
+
+   }
+
+   public static byte getSamplebyte(final long position) {
+      return (byte) ('a' + position % ('z' - 'a' + 1));
+   }
+
    @Test
    public void testMessagePropertiesAreTransformedBetweenCoreAndHQProtocols() throws Exception {
 
@@ -71,28 +108,42 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       // HornetQ Client Objects
       connection.start();
 
-      // Check that HornetQ Properties are correctly converted to core properties.
-      for (int i = 0; i < 50; i++) {
-         TextMessage message = session.createTextMessage("message " + i);
-         message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
-         producer.send(message);
+      for (int i = 0; i < 10; i++) {
+         BytesMessage m = session.createBytesMessage();
+         m.setIntProperty("count", i);
+
+         m.setObjectProperty(clientContainer.get_LargeMessageInputStream(), createFakeLargeStream(LARGE_MESSAGE_SIZE));
+
+         producer.send(m);
       }
 
-      // Repeat send, hoping messages will get ignored
-      for (int i = 0; i < 50; i++) {
-         TextMessage message = session.createTextMessage("message " + i);
-         message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
-         producer.send(message);
-      }
+      connection.close();
 
-      for (int i = 0; i < 50; i++) {
-         TextMessage message = (TextMessage)consumer.receive(5000);
-         Assert.assertNotNull(message);
-         Assert.assertEquals("message " + i, message.getStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID()));
-         System.out.println("Received " + message);
-      }
+      connection = connectionFactory.createConnection();
 
-      Assert.assertNull(consumer.receiveNoWait());
+      session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+      consumer = session.createConsumer(queue);
+
+      connection.start();
+
+      for (int m = 0; m < 10; m++) {
+         BytesMessage rm = (BytesMessage) consumer.receive(10000);
+         Assert.assertNotNull(rm);
+         Assert.assertEquals(m, rm.getIntProperty("count"));
+
+         byte[] data = new byte[1024];
+
+         System.out.println("Message = " + rm);
+
+         for (int i = 0; i < LARGE_MESSAGE_SIZE; i += 1024) {
+            int numberOfBytes = rm.readBytes(data);
+            Assert.assertEquals(1024, numberOfBytes);
+            for (int j = 0; j < 1024; j++) {
+               Assert.assertEquals(getSamplebyte(i + j), data[j]);
+            }
+         }
+      }
 
       connection.close();
    }
