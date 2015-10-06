@@ -50,7 +50,7 @@ public abstract class IsolatedServerVersionBaseTest {
       exchange = newExchange();
    }
 
-   protected ServerContainer startServer(int serverID, String[] queues, String[] topics) throws Exception {
+   protected ServerContainer startServer(String serverID, String[] queues, String[] topics) throws Exception {
       ServerContainer container = exchange.newServerContainer();
       container.setInfo(temporaryFolder.getRoot().getAbsolutePath(), serverID, queues, topics);
       container.start();

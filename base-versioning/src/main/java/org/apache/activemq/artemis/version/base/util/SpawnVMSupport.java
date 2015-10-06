@@ -63,6 +63,11 @@ public final class SpawnVMSupport {
                                  final boolean logErrorOutput,
                                  final String logName,
                                  final String... args) throws Exception {
+
+      if (System.getProperty("ignoreStart") != null) {
+         return null;
+      }
+      
       ProcessBuilder builder = new ProcessBuilder();
       final String javaPath = Paths.get(System.getProperty("java.home"), "bin", "java").toAbsolutePath().toString();
       builder.command(javaPath);

@@ -28,11 +28,11 @@ public class ArtemisServerContainer implements ServerContainer {
    Process process;
 
    private String folder;
-   private int id;
+   private String id;
    private String[] queues;
    private String[] topics;
 
-   public void setInfo(String folder, int id, String[] queues, String[] topics) throws Exception {
+   public void setInfo(String folder, String id, String[] queues, String[] topics) throws Exception {
       this.folder = folder;
       this.id = id;
       this.queues = queues;
@@ -52,7 +52,7 @@ public class ArtemisServerContainer implements ServerContainer {
 
       LinkedList<String> parameters = new LinkedList<String>();
       parameters.add(folder);
-      parameters.add(Integer.toString(id));
+      parameters.add(id);
       parameters.add(Integer.toString(queues.length));
       for (String q : queues) {
          parameters.add(q);
@@ -68,6 +68,8 @@ public class ArtemisServerContainer implements ServerContainer {
 
    @Override
    public void stop() throws Exception {
-      process.destroy();
+      if (process != null) {
+         process.destroy();
+      }
    }
 }

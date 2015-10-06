@@ -45,11 +45,10 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
    public void setUp() throws Exception {
       super.setUp();
 
-      this.serverContainer = startServer(0, new String[]{queueName}, new String[0]);
+      this.serverContainer = startServer("0", new String[]{queueName}, new String[0]);
 
       clientContainer = exchange.newClient();
    }
-
 
    @After
    public void tearDown() throws Exception {
@@ -73,6 +72,11 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       // HornetQ Client Objects
       connection.start();
 
+      // duplicate _HQ_DUPL_ID on 2.4.6
+      // duplicate _HQ_DUPL_ID on 2.3.25
+
+      System.out.println("duplicate " + clientContainer.get_HDR_DUPLICATE_DETECTION_ID());
+
       // Check that HornetQ Properties are correctly converted to core properties.
       for (int i = 0; i < 50; i++) {
          TextMessage message = session.createTextMessage("message " + i);
@@ -84,7 +88,6 @@ public abstract class AbstractSimpleProtocolIDsTest extends IsolatedServerVersio
       for (int i = 0; i < 50; i++) {
          TextMessage message = session.createTextMessage("message " + i);
          message.setStringProperty(clientContainer.get_HDR_DUPLICATE_DETECTION_ID(), "message " + i);
-         System.out.println("duplicate " + clientContainer.get_HDR_DUPLICATE_DETECTION_ID());
          producer.send(message);
       }
 
