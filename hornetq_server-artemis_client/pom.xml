@@ -133,14 +133,14 @@
                      <goal>dependency-scan</goal>
                   </goals>
                   <configuration>
-                     <dependencyList>
+                     <libListWithDeps>
                         <arg>org.hornetq:hornetq-jms-server:${hornetq-version}</arg>
-                     </dependencyList>
-                     <individualList>
+                     </libListWithDeps>
+                     <libList>
                         <arg>org.redhat.messaging:hornetq_server-artemis_client:${project.version}</arg>
                         <arg>org.redhat.messaging:base-versioning:${project.version}</arg>
                         <arg>org.redhat.messaging:hornetq_server-artemis_client:${project.version}</arg>
-                     </individualList>
+                     </libList>
                      <variableName>serverClassPath</variableName>
                   </configuration>
                </execution>
