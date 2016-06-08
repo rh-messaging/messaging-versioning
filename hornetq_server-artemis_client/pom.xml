@@ -32,10 +32,6 @@
    <packaging>jar</packaging>
    <name>HornetQ Server / Artemis Client</name>
 
-   <properties>
-      <artemis-version>1.3.0-SNAPSHOT</artemis-version>
-   </properties>
-
    <profiles>
       <!-- HornetQ Profiles -->
       <profile>
