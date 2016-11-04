@@ -36,7 +36,7 @@ under the License.
    </modules>
    
    <properties>
-      <artemis-version>1.5.0-SNAPSHOT</artemis-version>
+      <artemis-version>1.6.0-SNAPSHOT</artemis-version>
    </properties>
 
    <repositories>
