@@ -43,7 +43,6 @@ public class ArtemisServerContainer implements ServerContainer {
    public ArtemisServerContainer() {
    }
 
-   @Override
    public void start() throws Exception {
       String classPath = System.getProperty("serverClassPath");
       if (classPath == null) {
@@ -66,7 +65,6 @@ public class ArtemisServerContainer implements ServerContainer {
       process = SpawnVMSupport.spawnVM(ArtemisServerProcess.wordStart, classPath, ArtemisServerProcess.class.getName(), new String[]{}, true, true, "srv:" + id, parameters.toArray(new String[parameters.size()]));
    }
 
-   @Override
    public void stop() throws Exception {
       if (process != null) {
          process.destroy();

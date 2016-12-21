@@ -45,6 +45,7 @@ public abstract class AbstractLargeMessageTest extends IsolatedServerVersionBase
    String queueName = "test.hq.queue";
 
    @Before
+   @Override
    public void setUp() throws Exception {
       super.setUp();
 

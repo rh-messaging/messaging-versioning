@@ -39,7 +39,6 @@ public class ArtemisServerExchange implements ClientServerExchange {
       this.folder = folder;
    }
 
-   @Override
    public ClientContainer newClient() {
       return new HornetQClientConnector();
    }
@@ -51,17 +50,14 @@ public class ArtemisServerExchange implements ClientServerExchange {
 
    class HornetQClientConnector implements ClientContainer {
 
-      @Override
       public void close() {
 
       }
 
-      @Override
       public String get_LargeMessageInputStream() {
          return HornetQJMSConstants.JMS_HORNETQ_INPUT_STREAM;
       }
 
-      @Override
       public ConnectionFactory getFactory() {
          Map properties = new HashMap();
          properties.put(TransportConstants.HOST_PROP_NAME, "localhost");
@@ -71,7 +67,6 @@ public class ArtemisServerExchange implements ClientServerExchange {
          return factory;
       }
 
-      @Override
       public String get_HDR_DUPLICATE_DETECTION_ID() {
          return MessageImpl.HDR_DUPLICATE_DETECTION_ID.toString();
       }
