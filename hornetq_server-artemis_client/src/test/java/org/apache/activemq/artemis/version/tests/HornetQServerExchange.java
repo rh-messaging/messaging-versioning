@@ -19,8 +19,8 @@ package org.apache.activemq.artemis.version.tests;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.activemq.artemis.api.core.Message;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSConstants;
-import org.apache.activemq.artemis.core.message.impl.MessageImpl;
 import org.apache.activemq.artemis.core.protocol.hornetq.client.HornetQClientProtocolManagerFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.version.base.ClientContainer;
@@ -64,7 +64,7 @@ public class HornetQServerExchange implements ClientServerExchange {
 
       @Override
       public String get_HDR_DUPLICATE_DETECTION_ID() {
-         return MessageImpl.HDR_DUPLICATE_DETECTION_ID.toString();
+         return Message.HDR_DUPLICATE_DETECTION_ID.toString();
       }
    }
 }
